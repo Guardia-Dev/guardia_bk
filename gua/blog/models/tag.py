@@ -1,0 +1,7 @@
+from django.db import models
+
+# Create your models here.
+class Tag(models.Model):
+    name = models.CharField("标签名", max_length=128, null=False, blank=False, unique=True)
+    color = models.IntegerField("标签颜色")
+
