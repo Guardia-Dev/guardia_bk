@@ -21,7 +21,7 @@ from blog import views
 
 
 def blog_url(_url):
-    tem = 'api/blog/{url}'
+    tem = 'blog/{url}'
     return tem.format(url=_url)
 
 
@@ -31,6 +31,6 @@ router.register(blog_url('posts'), views.PostViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include(router.urls)),
+    path('api/', include(router.urls)),
     path('api-auth', include('rest_framework.urls', namespace='rest_framework')),
 ]
