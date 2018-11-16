@@ -17,16 +17,11 @@ from django.contrib import admin
 from django.urls import path, include
 
 from rest_framework import routers
-from blog import views
-
-
-def blog_url(_url):
-    tem = 'blog/{url}'
-    return tem.format(url=_url)
+from blog.api import post
 
 
 router = routers.DefaultRouter()
-router.register(blog_url('posts'), views.PostViewSet)
+router.register(post.url_prefix('posts'), post.PostViewSet)
 
 
 urlpatterns = [
