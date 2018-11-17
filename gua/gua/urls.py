@@ -19,13 +19,13 @@ from django.urls import path, include
 from rest_framework import routers
 from blog.api import post
 
-
-router = routers.DefaultRouter()
-router.register(post.url_prefix('posts'), post.PostViewSet)
-
+# Blog
+blog_urlpatterns = [
+    path(post.url_prefix('posts'), post.test_case),
+]
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include(router.urls)),
-    path('api-auth', include('rest_framework.urls', namespace='rest_framework')),
 ]
+
+urlpatterns += blog_urlpatterns
