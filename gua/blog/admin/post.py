@@ -1,9 +1,10 @@
 from django.contrib import admin
 
-from ..models import post
+from blog.models import Post
+from blog.admin.tag import TagInline
 
 
-@admin.register(post.Post)
+@admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
     list_display = [
         'title',
@@ -12,5 +13,12 @@ class PostAdmin(admin.ModelAdmin):
         'category',
     ]
 
-    list_filter = [
+    inlines = [
+        TagInline,
     ]
+
+    exclude = (
+        'tag',
+    )
+
+    list_filter = []
