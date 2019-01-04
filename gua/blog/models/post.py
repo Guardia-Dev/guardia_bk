@@ -1,6 +1,7 @@
 from django.db import models
 
-from .tag import Tag
+from blog.models.tag import Tag
+from blog.models.category import Category
 
 
 # Create your models here.
@@ -13,6 +14,7 @@ class Post(models.Model):
     updated_at = models.DateTimeField("上次修改时间", auto_now=True)
 
     tag = models.ManyToManyField(Tag, null=True)
+    category = models.ForeignKey(Category, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         s = "{title} - {author}, {date}"

@@ -9,6 +9,8 @@ class PostAdmin(admin.ModelAdmin):
         'title',
         'author',
         'body',
+        'category',
     ]
 
-    list_filter = []
+    list_filter = [
+    ]

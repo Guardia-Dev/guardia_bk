@@ -2,7 +2,11 @@ from blog.models import Post
 from rest_framework import serializers, viewsets
 
 
-class PostSerializer(serializers.HyperlinkedModelSerializer):
+class PostSerializer(serializers.ModelSerializer):
+
+    category = serializers.CharField(source='category.name', allow_null=True)
+    tag = serializers.StringRelatedField(many=True)
+
     class Meta:
         model = Post
         fields = (
@@ -10,4 +14,6 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
             'title',
             'author',
             'body',
+            'category',
+            'tag',
         )

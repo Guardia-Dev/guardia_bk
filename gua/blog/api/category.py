@@ -1,5 +1,5 @@
-from blog.serializers.post import PostSerializer
-from blog.models import Post
+from blog.serializers.category import CategorySerializer
+from blog.models import Category
 
 from rest_framework import viewsets, status, permissions
 from rest_framework.parsers import JSONParser
@@ -10,12 +10,8 @@ from rest_framework.decorators import action, api_view, permission_classes, pars
 @api_view(['GET', 'POST'])
 @permission_classes((permissions.AllowAny, ))
 @parser_classes((JSONParser,))
-def query_posts(request):
+def query_categories(request):
     if request.method == 'GET':
-        posts = Post.objects.all()
-        serializer = PostSerializer(posts, many=True)
+        categories = Category.objects.all()
+        serializer = CategorySerializer(categories, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-
-

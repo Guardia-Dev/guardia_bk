@@ -17,11 +17,12 @@ from django.contrib import admin
 from django.urls import path, include
 
 from rest_framework import routers
-from blog.api import post
+from blog.api import base, post, category
 
 # Blog
 blog_urlpatterns = [
-    path(post.url_prefix('posts'), post.test_case),
+    path(base.url_prefix('posts'), post.query_posts),
+    path(base.url_prefix('categories'), category.query_categories),
 ]
 
 urlpatterns = [
