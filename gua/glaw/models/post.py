@@ -21,6 +21,8 @@ class Post(models.Model):
     drafters = models.ManyToManyField(User, related_name="drafters", verbose_name="定稿人")
     # 原文链接
     origin_url = models.URLField(verbose_name="原文链接", max_length=128, blank=True, null=True)
+    # GitHub 链接
+    github_url = models.URLField(verbose_name="GitHub 链接", max_length=128, blank=True, null=True)
 
     tag = models.ManyToManyField(Tag, related_name="tags", verbose_name="标签")
     category = models.ForeignKey(Category, null=True, on_delete=models.SET_NULL, verbose_name="分类")
