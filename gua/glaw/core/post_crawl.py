@@ -1,23 +1,25 @@
-from bs4 import BeautifulSoup
-import bs4
+from glaw.models import Post
+
+from datetime import datetime
 import requests
 import re
 import json
 
 POST_LIST_API_URL = "https://api.github.com/repos/SwiftGGTeam/source/contents/_posts?ref=master"
-TEST_TOKEN = "6614d8f1802af67833d5e9291a652ffc4337ea82"
+TEST_TOKEN = "2cd2424bd7018f8a33a0fac5255343a3dbef13bc"
+post_ret = []
 
 
-def excutor_post():
+def excutor_post() -> list:
     # 请求列表
     headers = {
-        'Authorization': "token 6614d8f1802af67833d5e9291a652ffc4337ea82",
+        'Authorization': "token " + TEST_TOKEN,
         'cache-control': "no-cache",
     }
     r = requests.get(POST_LIST_API_URL, headers=headers)
     data_content = r.content
     post_list = json.loads(s=data_content)
-    # print(post_list)
+    print(post_list)
     ret = []
     if type(post_list) is list:
         for post in post_list:
@@ -27,9 +29,9 @@ def excutor_post():
                 info = dict(resolve_header(raw))
                 info.update(resolve_body(raw))
                 ret.append(info)
-
                 # 测试输出
                 ptr_post_dict(info)
+    return ret
 
 
 def resolve_header(raw) -> dict:
@@ -40,11 +42,11 @@ def resolve_header(raw) -> dict:
     for line in raw.split("\n"):
         # print(line)
         # 匹配 title
-        title_re_test = re.match(r'^title:.+?"(.+?)".*?$', line)
+        title_re_test = re.match(r'^title:.*?"(.+?)".*?$', line)
         if title_re_test:
             info['title'] = title_re_test.group(1)
         # 匹配时间
-        date_re_test = re.match(r'^date:.+?(\d{4}-\d{2}-\d{2}).*?$', line)
+        date_re_test = re.match(r'^date:.*?(\d{4}-\d{2}-\d{2}).*?$', line)
         if date_re_test:
             info['date'] = date_re_test.group(1)
         # 匹配 permalink
@@ -94,6 +96,22 @@ def ptr_post_dict(post: dict):
         print("后缀：%s" % post['permalink'])
     if 'html_url' in post.keys():
         print("html：%s" % post['html_url'])
+
+
+def bulk_insert():
+    list_to_insert = list()
+    for post_dic in post_ret:
+        if not 'title' in post_dic.keys():
+            continue
+        post = Post(title=post['title'])
+        if 'date' in post_dic.keys():
+            post.published_at = datetime.strptime(post_dic['date'], "%Y-%m-%d")
+        if 'html_url' in post_dic.keys():
+            post.origin_url = post_dic['html_url']
+        list_to_insert.append(post)
+    # BD
+    Post.objects.bulk_create(list_to_insert)
+
 
 
 if __name__ == "__main__":

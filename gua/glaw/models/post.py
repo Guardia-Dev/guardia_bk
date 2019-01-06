@@ -29,6 +29,7 @@ class Post(models.Model):
 
     created_at = models.DateTimeField("创建时间", auto_now_add=True)
     updated_at = models.DateTimeField("上次修改时间", auto_now=True)
+    published_at = models.DateTimeField("译文发布时间", auto_now=True)
     origin_at = models.DateTimeField("原文创建时间", auto_now=True)
 
     def __str__(self):
