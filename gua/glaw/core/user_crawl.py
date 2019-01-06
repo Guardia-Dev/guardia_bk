@@ -5,7 +5,8 @@ import re
 
 USER_URL = "https://github.com/SwiftGGTeam/translation/blob/master/%E6%88%90%E5%91%98%E4%BB%8B%E7%BB%8D.md"
 
-def excutor_user() -> dict:
+
+def excutor_user() -> list:
     r = requests.get(USER_URL)
     soup = BeautifulSoup(r.content, 'lxml')
     name_elements = soup.find_all(name="h2")
