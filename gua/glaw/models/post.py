@@ -20,7 +20,7 @@ class Post(models.Model):
     # 定稿人
     drafters = models.ManyToManyField(User, related_name="drafters", verbose_name="定稿人")
     # 原文链接
-    origin_url = models.URLField(verbose_name="原文链接", max_length=128, blank=True, null=True)
+    html_url = models.URLField(verbose_name="原文链接", max_length=128, blank=True, null=True)
     # GitHub 链接
     github_url = models.URLField(verbose_name="GitHub 链接", max_length=128, blank=True, null=True)
 
@@ -29,7 +29,7 @@ class Post(models.Model):
 
     created_at = models.DateTimeField("创建时间", auto_now_add=True)
     updated_at = models.DateTimeField("上次修改时间", auto_now=True)
-    published_at = models.DateTimeField("译文发布时间", auto_now=True)
+    published_at = models.DateTimeField("译文发布时间", auto_now_add=True)
     origin_at = models.DateTimeField("原文创建时间", auto_now=True)
 
     def __str__(self):

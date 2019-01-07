@@ -14,6 +14,8 @@ class PostAdmin(admin.ModelAdmin):
         'title',
         'origin_title',
         'author',
+        'published_at',
+        'html_url',
         'body',
     ]
 

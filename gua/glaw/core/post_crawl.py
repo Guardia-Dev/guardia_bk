@@ -107,12 +107,33 @@ def bulk_insert():
         if 'date' in post_dic.keys():
             post.published_at = datetime.strptime(post_dic['date'], "%Y-%m-%d")
         if 'html_url' in post_dic.keys():
-            post.origin_url = post_dic['html_url']
+            post.html_url = post_dic['html_url']
         list_to_insert.append(post)
     # BD
     Post.objects.bulk_create(list_to_insert)
 
 
+def bulk_update(res):
+    """
+    爬虫更新策略
+    :param res: 传入 excutor_post 爬虫结果
+    :return:
+    """
+    flags = {}
+    list_to_update = list()
+    for post_dic in res:
+        if not 'title' in post_dic.keys():
+            continue
+        if post['title'] in flags.keys():
+            continue
+        flags[post['title']] = True
+        post = Post.objects.get(title=post['title'])
+        if 'date' in post_dic.keys():
+            post.published_at = datetime.strptime(post_dic['date'], "%Y-%m-%d")
+        if 'html_url' in post_dic.keys():
+            post.html_url = post_dic['html_url']
+        list_to_update.append(post)
+    Post.objects.bulk_update(list_to_update)
 
 if __name__ == "__main__":
     excutor_post()
