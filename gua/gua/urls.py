@@ -17,16 +17,31 @@ from django.contrib import admin
 from django.urls import path, include
 
 from rest_framework import routers
-from blog.api import base, post, category
+from blog.api import post as blog_post
+from blog.api import category as blog_category
+from blog.api import base as blog_base
 
-# Blog
-blog_urlpatterns = [
-    path(base.url_prefix('posts'), post.query_posts),
-    path(base.url_prefix('categories'), category.query_categories),
-]
+from glaw.api import post as glaw_post
+from glaw.api import base as glaw_base
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 ]
 
+# Blog
+blog_urlpatterns = [
+    path(blog_base.url_prefix('posts'), blog_post.query_posts),
+    path(blog_base.url_prefix('categories'), blog_category.query_categories),
+]
+
 urlpatterns += blog_urlpatterns
+
+# Glaw
+glaw_urlpatterns = [
+    path(glaw_base.url_prefix('posts'), glaw_post.query_posts),
+]
+
+urlpatterns += glaw_urlpatterns
+
+
+
