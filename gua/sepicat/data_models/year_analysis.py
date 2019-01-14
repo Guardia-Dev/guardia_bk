@@ -15,6 +15,7 @@ import requests
 
 from sepicat.data_models.contribution import Contribution, RepoActivity
 
+
 @unique
 class PageType(Enum):
     """
@@ -150,6 +151,7 @@ class YearAnalysis:
                                 month_repo_data[repo_name] = repo
 
             self.repo_actions[month] = month_repo_data
+
 
 if __name__ == "__main__":
     id = "biboyang"
