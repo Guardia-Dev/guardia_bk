@@ -13,6 +13,7 @@ import bs4
 import re
 import requests
 
+from sepicat.data_models.contribution import Contribution, RepoActivity
 
 @unique
 class PageType(Enum):
@@ -34,6 +35,8 @@ def fetch_page(tt: PageType, login: str, header: dict, year: int, month: int = 1
     :return:
     """
     if tt is PageType.Contributions:
+        if month // 10 == 0:
+            month = "0{m}".format(m=month)
         from_date = "{year}-{month}-01".format(year=year, month=month)
         to_date = "{year}-{month}-31".format(year=year, month=month)
         profile_page_url = "https://github.com/{login}?tab=overview&from={from_date}&to={to_date}"
@@ -53,6 +56,8 @@ class YearAnalysis:
             # "Authorization": "token {token}".format(token=self.token),
             "Authorization": "token 56fc442a82f3cd5c369468acfef0ae92966e0d3b",
         }
+        self.contributions = []
+        self.repo_actions = {}
 
     def fetch_contributions(self):
         """
@@ -74,16 +79,85 @@ class YearAnalysis:
             _r = re.match(r'background-color: (#[a-fA-F0-9]{6})', level_style)
             if _r:
                 level_hash[level] = _r.group(1)
-
-        print(level_hash)
+        level_hash_re = {v: k for k, v in level_hash.items()}
 
         rects = soup.find_all(name="rect")
+        self.contributions = []
         for rect in rects:
-            pass
+            current_contribution = Contribution(date=rect.attrs['data-date'],
+                                                level=level_hash_re[rect.attrs['fill']],
+                                                count=rect.attrs['data-count'])
+            self.contributions.append(current_contribution)
 
+    def fetch_commits(self):
+        """
+        Fetch the commits by GitHub API
+        :return:
+        """
+        self.repo_actions = {}
+        for month in range(1, 13):
+            print("爬取 {month} 月 Repo Actions".format(month=month))
+            html_str = fetch_page(PageType.Contributions,
+                                  login=self.login,
+                                  header=self.header,
+                                  year=self.year,
+                                  month=month)
+            soup = BeautifulSoup(html_str, 'lxml')
+            # 获取全部分类
+            outer_types = soup.find_all("div", attrs={
+                "class": re.compile(r'profile-rollup-wrapper py-4 pl-4 position-relative ml-3.*?$'),
+            })
+            month_repo_data = {}
+            for outer in outer_types:
 
+                # commits & create repo
+                title_ele = outer.find(name="span", attrs={"class": "float-left"})
+                if title_ele is not None and type(title_ele) is bs4.element.Tag:
+                    title_text = title_ele.text.replace('\n', '')
 
+                    # 类型为 commits
+                    if re.match(r'^[\s\S]*Created \d{1,}[\s\S]+commits in.*?$', title_text):
+                        items = outer.find_all(name="li", attrs={'class': 'ml-0 py-1'})
+                        for item in items:
+                            detail = item.text.replace('\n', '')
+                            ma = re.match(r'^[\s\S]*?([a-zA-Z0-9\-\.]+/[a-zA-Z0-9\-\.]+)[\s\S]*?(\d{1,})[\s\S]+?commit(:?s)?[\s\S]*$',
+                                          detail)
+                            if ma:
+                                repo_name = ma.group(1)
+                                commit_cnt = ma.group(2)
+                                if repo_name in month_repo_data.keys():
+                                    repo = month_repo_data[repo_name]
+                                    repo.commit_cnt += int(commit_cnt)
+                                else:
+                                    repo = RepoActivity(repo_name=repo_name)
+                                    repo.commit_cnt = int(commit_cnt)
+                                month_repo_data[repo_name] = repo
+
+                    # 类型为 created repository
+                    elif re.match(r'^[\s\S]*?Created[\s\S]*\d{1,}[\s\S]*repositor(y|ies).*?$', title_text):
+                        items = outer.find_all(name="li", attrs={'class': 'd-block mt-1 py-1'})
+                        for item in items:
+                            detail = item.text.replace('\n', '')
+                            ma = re.match(r'^[\s\S]*?([A-Za-z0-9\-\.]+/[A-Za-z0-9\-\.]+)[\s\S]+.+$', detail)
+                            if ma:
+                                repo_name = ma.group(1)
+                                if repo_name in month_repo_data.keys():
+                                    repo: RepoActivity = month_repo_data[repo_name]
+                                    repo.is_created = True
+                                else:
+                                    repo = RepoActivity(repo_name=repo_name)
+                                    repo.is_created = True
+                                month_repo_data[repo_name] = repo
+
+            self.repo_actions[month] = month_repo_data
 
 if __name__ == "__main__":
     analysis = YearAnalysis(login="Desgard", token="", year=2018)
-    analysis.fetch_contributions()
+    # analysis.fetch_contributions()
+    analysis.fetch_commits()
+    # print(analysis.repo_actions)
+    for k, v in analysis.repo_actions.items():
+        print(k, "月")
+        if type(v) is dict:
+            for repo_name, action in v.items():
+                print(repo_name, "Commit 次数", action.commit_cnt)
