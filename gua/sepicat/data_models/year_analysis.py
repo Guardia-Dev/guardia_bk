@@ -152,12 +152,20 @@ class YearAnalysis:
             self.repo_actions[month] = month_repo_data
 
 if __name__ == "__main__":
-    analysis = YearAnalysis(login="Desgard", token="", year=2018)
+    id = "biboyang"
+    analysis = YearAnalysis(login=id, token="", year=2018)
     # analysis.fetch_contributions()
     analysis.fetch_commits()
     # print(analysis.repo_actions)
+    tot = 0
+    print(id, "的 commit 记录")
     for k, v in analysis.repo_actions.items():
         print(k, "月")
         if type(v) is dict:
             for repo_name, action in v.items():
+                if action.commit_cnt == 0:
+                    continue
                 print(repo_name, "Commit 次数", action.commit_cnt)
+                tot += action.commit_cnt
+
+    print("共", tot, "次 Commit 记录")
