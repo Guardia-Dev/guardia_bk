@@ -28,3 +28,11 @@ class RepoActivity:
         self.pull_request_cnt = 0
         self.issue_cnt = 0
         self.is_created = False
+
+    @property
+    def to_dict(self):
+        return {
+            'repo_name': self.repo_name,
+            'commit_cnt': self.commit_cnt,
+            'is_created': self.is_created,
+        }

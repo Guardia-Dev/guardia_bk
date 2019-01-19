@@ -24,6 +24,10 @@ from blog.api import base as blog_base
 from glaw.api import post as glaw_post
 from glaw.api import base as glaw_base
 
+from sepicat.api import analysis as sepi_analysis
+from sepicat.api import base as sepi_base
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
 ]
@@ -43,5 +47,8 @@ glaw_urlpatterns = [
 
 urlpatterns += glaw_urlpatterns
 
-
-
+# Sepicat
+sepicat_urlpatterns = [
+    path(sepi_base.url_prefix_v1('analysis'), sepi_analysis.commit_analysis),
+]
+urlpatterns += sepicat_urlpatterns

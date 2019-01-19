@@ -12,6 +12,7 @@ from bs4 import BeautifulSoup
 import bs4
 import re
 import requests
+import copy
 
 from sepicat.data_models.contribution import Contribution, RepoActivity
 
@@ -57,8 +58,17 @@ class YearAnalysis:
             # "Authorization": "token {token}".format(token=self.token),
             "Authorization": "token 56fc442a82f3cd5c369468acfef0ae92966e0d3b",
         }
+        # contributions rect 数据
         self.contributions = []
+        # 全年总计 commit 数量
+        self.tot_commit = 0
+        # 所有仓库对应 commit 数量
+        self.repo_commits = {}
+
+        # 全年 action 事件
         self.repo_actions = {}
+        # 全年 action 事件 dict
+        self.repo_actions_dict = {}
 
     def fetch_contributions(self):
         """
@@ -152,9 +162,24 @@ class YearAnalysis:
 
             self.repo_actions[month] = month_repo_data
 
+        self.tot_commit = 0
+        self.repo_commits = {}
+        self.repo_actions_dict = copy.deepcopy(self.repo_actions)
+        for k, v in self.repo_actions_dict.items():
+            if type(v) is dict:
+                for repo_name, action in v.items():
+                    # 数据统计
+                    self.tot_commit += action.commit_cnt
+                    if repo_name in self.repo_commits.keys():
+                        self.repo_commits[repo_name] += action.commit_cnt
+                    else:
+                        self.repo_commits[repo_name] = action.commit_cnt
+                    if type(action) is RepoActivity:
+                        self.repo_actions_dict[k][repo_name] = action.to_dict
+
 
 if __name__ == "__main__":
-    id = "biboyang"
+    id = "Desgard"
     analysis = YearAnalysis(login=id, token="", year=2018)
     # analysis.fetch_contributions()
     analysis.fetch_commits()
