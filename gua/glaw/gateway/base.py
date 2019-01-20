@@ -1,4 +1,4 @@
 
 def url_prefix(_url):
-    tem = 'gateway/swiftgg/{url}'
+    tem = 'api/swiftgg/{url}'
     return tem.format(url=_url)
