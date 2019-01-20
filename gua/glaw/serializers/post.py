@@ -9,5 +9,6 @@ class PostSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'title',
+            'body',
             'html_url',
         )

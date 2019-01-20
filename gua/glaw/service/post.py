@@ -11,7 +11,8 @@ def index(page=1, limit=20):
     :return:
     """
     posts = Post.objects.all().order_by('-published_at')
+    tot = len(posts)
     paginator = Paginator(posts, limit)
     result = paginator.page(page)
-    return list(result)
+    return list(result), tot
 

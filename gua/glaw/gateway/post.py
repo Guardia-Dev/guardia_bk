@@ -15,11 +15,12 @@ def query_posts(request):
     if request.method == 'GET':
         page = request.GET.get('page', 1)
         limit = request.GET.get('limit', 20)
-        posts = post_index(page=page, limit=limit)
+        posts, total = post_index(page=page, limit=limit)
         serializer = PostSerializer(posts, many=True)
         resp_data = {
             'page': page,
             'page_size': limit,
+            'total': total,
             'detail': serializer.data,
         }
         return Response(resp_data, status=status.HTTP_200_OK)
