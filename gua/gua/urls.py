@@ -21,8 +21,8 @@ from blog.api import post as blog_post
 from blog.api import category as blog_category
 from blog.api import base as blog_base
 
-from glaw.api import post as glaw_post
-from glaw.api import base as glaw_base
+from glaw.gateway import post as glaw_post
+from glaw.gateway import base as glaw_base
 
 from sepicat.api import analysis as sepi_analysis
 from sepicat.api import base as sepi_base

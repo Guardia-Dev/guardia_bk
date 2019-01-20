@@ -1,5 +1,6 @@
 from glaw.serializers.post import PostSerializer
 from glaw.models import Post
+from glaw.service.post import index as post_index
 
 from rest_framework import viewsets, status, permissions
 from rest_framework.parsers import JSONParser
@@ -12,9 +13,16 @@ from rest_framework.decorators import action, api_view, permission_classes, pars
 @parser_classes((JSONParser,))
 def query_posts(request):
     if request.method == 'GET':
-        posts = Post.objects.all()
+        page = request.GET.get('page', 1)
+        limit = request.GET.get('limit', 20)
+        posts = post_index(page=page, limit=limit)
         serializer = PostSerializer(posts, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        resp_data = {
+            'page': page,
+            'page_size': limit,
+            'detail': serializer.data,
+        }
+        return Response(resp_data, status=status.HTTP_200_OK)
 
 
 

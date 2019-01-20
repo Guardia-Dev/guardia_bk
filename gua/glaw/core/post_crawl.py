@@ -5,7 +5,7 @@ import requests
 import re
 import json
 
-POST_LIST_API_URL = "https://api.github.com/repos/SwiftGGTeam/source/contents/_posts?ref=master"
+POST_LIST_API_URL = "https://gateway.github.com/repos/SwiftGGTeam/source/contents/_posts?ref=master"
 # TEST_TOKEN = "2cd2424bd7018f8a33a0fac5255343a3dbef13bc"
 post_ret = []
 
