@@ -35,10 +35,16 @@ def fetch_state(login: str, header: dict = {}) -> dict:
             raise Getoutloop
 
         # 判断常规的 emoji 类型
-        emoji_element = soup.find("g-emoji")
-        # emoji_element = soup.find("g-emoji", attrs={
-        #     "class": "g-emoji",
-        # })
+        emoji_container_element = soup.find("div", attrs={
+            "class": re.compile(r'^.*?user-status-emoji-container.*?$'),
+        })
+
+        if emoji_container_element is None:
+            return None
+
+        emoji_element = emoji_container_element.find("g-emoji")
+        print(emoji_element)
+
         parent_element = soup.find("div", attrs={
             "class": "float-left ws-normal text-gray-dark text-bold",
         })
@@ -55,7 +61,7 @@ def fetch_state(login: str, header: dict = {}) -> dict:
             emoji_title = ''
             title = ''
             state_text = ''
-            raise  Getoutloop
+            raise Getoutloop
 
     except Getoutloop:
         state_title = soup.find("div", attrs={
@@ -65,10 +71,15 @@ def fetch_state(login: str, header: dict = {}) -> dict:
             'icon': icon,
             'title': title,
             'state_text': state_text,
-            'text': state_title.findChild().text,
+            'emoji_title': emoji_title,
         }
+        if state_title is not None:
+            res['state']['text'] = state_title.findChild().text.strip()
+        else:
+            res['state']['text'] = ''
 
         return res
+
 
 if __name__ == "__main__":
     # login = "Desgard"
