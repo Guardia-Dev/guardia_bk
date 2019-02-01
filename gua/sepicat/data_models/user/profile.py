@@ -35,9 +35,10 @@ def fetch_state(login: str, header: dict = {}) -> dict:
             raise Getoutloop
 
         # 判断常规的 emoji 类型
-        emoji_element = soup.find("g-emoji", attrs={
-            "class": "g-emoji",
-        })
+        emoji_element = soup.find("g-emoji")
+        # emoji_element = soup.find("g-emoji", attrs={
+        #     "class": "g-emoji",
+        # })
         parent_element = soup.find("div", attrs={
             "class": "float-left ws-normal text-gray-dark text-bold",
         })
