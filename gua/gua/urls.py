@@ -24,8 +24,9 @@ from blog.api import base as blog_base
 from glaw.gateway import post as glaw_post
 from glaw.gateway import base as glaw_base
 
-from sepicat.api import analysis as sepi_analysis
-from sepicat.api import base as sepi_base
+from sepicat.gateway.analysis import commit_analysis as sepi_commit_analysis
+from sepicat.gateway.profile import user_profile_state as sepi_user_profile_state
+from sepicat.gateway import base as sepi_base
 
 
 urlpatterns = [
@@ -49,6 +50,7 @@ urlpatterns += glaw_urlpatterns
 
 # Sepicat
 sepicat_urlpatterns = [
-    path(sepi_base.url_prefix_v1('analysis'), sepi_analysis.commit_analysis),
+    path(sepi_base.url_prefix_v1('analysis'), sepi_commit_analysis),
+    path(sepi_base.url_prefix_v1('user_profile_state'), sepi_user_profile_state),
 ]
 urlpatterns += sepicat_urlpatterns
