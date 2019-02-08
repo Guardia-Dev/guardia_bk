@@ -43,7 +43,7 @@ def fetch_state(login: str, header: dict = {}) -> dict:
             return None
 
         emoji_element = emoji_container_element.find("g-emoji")
-        print(emoji_element)
+        # print(emoji_element)
 
         parent_element = soup.find("div", attrs={
             "class": "float-left ws-normal text-gray-dark text-bold",
