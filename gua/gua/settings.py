@@ -31,6 +31,7 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
     'app.desgard.com',
+	'app.sepicat.net',
 ]
 
 
